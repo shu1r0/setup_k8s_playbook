@@ -1,0 +1,79 @@
+- name: Containerd required modules
+  become: true
+  copy:
+    content: |
+      overlay
+      br_netfilter
+    dest: /etc/modules-load.d/containerd.conf
+    mode: 0644
+
+- name: Modprobe for containerd
+  become: true
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - overlay
+    - br_netfilter
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/posix/sysctl_module.html
+- name: Set sysctl
+  become: true
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: '1'
+    sysctl_set: true
+    sysctl_file: /etc/sysctl.d/99-k8s.conf
+  with_items:
+    - net.bridge.bridge-nf-call-ip6tables
+    - net.bridge.bridge-nf-call-iptables
+    - net.ipv4.ip_forward 
+
+
+- name: Install dependent packages
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    update_cache: true
+
+- name: Add gpg key
+  become: true
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add rep to apt
+  become: true
+  vars:
+    dist: "{{ ansible_facts.distribution_release }}"
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ dist }} stable
+    state: present
+
+- name: Install containerd
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - containerd.io
+
+- name: Create containerd directory
+  become: true
+  file:
+    path: /etc/containerd
+    state: directory
+    mode: 0775
+
+- name: Setting containerd
+  become: true
+  shell: containerd config default | tee /etc/containerd/config.toml
+
+- name: Restart containerd
+  become: true
+  ansible.builtin.service:
+    name: containerd
+    state: restarted
+    daemon_reload: yes

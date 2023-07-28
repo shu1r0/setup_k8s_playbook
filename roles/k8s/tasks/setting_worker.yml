@@ -1,0 +1,7 @@
+- name: Copy the join command
+  become: true
+  copy: src=files/join-command dest=/tmp/join-command.sh mode=0777
+
+- name: Join the node to cluster
+  become: true
+  command: sh /tmp/join-command.sh

@@ -1,0 +1,26 @@
+# https://docs.ansible.com/ansible/latest/collections/ansible/posix/sysctl_module.html
+- name: Set sysctl
+  become: true
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: '1'
+    sysctl_set: true
+    sysctl_file: /etc/sysctl.d/99-k8s.conf
+  with_items:
+    - net.bridge.bridge-nf-call-ip6tables
+    - net.bridge.bridge-nf-call-iptables
+    - net.ipv4.ip_forward 
+
+- name: Configure node ip
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/kubelet
+    line: KUBELET_EXTRA_ARGS=--cgroup-driver=systemd --node-ip={{ node_ip }}
+    create: yes
+
+- name: Restart kubelet
+  become: true
+  ansible.builtin.service:
+    name: kubelet
+    state: restarted
+    daemon_reload: yes

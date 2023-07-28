@@ -1,0 +1,15 @@
+- name: Create docker compose directory
+  become: true
+  ansible.builtin.file:
+    path: /usr/local/lib/docker/cli-plugins/
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "775"
+
+- name: Install docker-compose from official github repo
+  become: true
+  ansible.builtin.get_url:
+    url: https://github.com/docker/compose/releases/download/v2.4.1/docker-compose-linux-x86_64
+    dest: /usr/local/lib/docker/cli-plugins/docker-compose
+    mode: '+x'

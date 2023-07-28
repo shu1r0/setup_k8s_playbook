@@ -1,0 +1,24 @@
+- name: Install dependent packages
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - linux-headers-{{ ansible_kernel }}
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    update_cache: true
+    autoremove: true
+
+# - name: Install prometheus-node-exporter for prometheus
+#   become: true
+#   ansible.builtin.apt:
+#     pkg:
+#       - prometheus-node-exporter
+
+# - name: Start prometheus-node-exporter for prometheus
+#   become: true
+#   ansible.builtin.service:
+#     name: prometheus-node-exporter
+#     state: started

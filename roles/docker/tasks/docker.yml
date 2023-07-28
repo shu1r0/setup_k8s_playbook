@@ -1,0 +1,39 @@
+- name: Install dependent packages
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    update_cache: true
+
+- name: Add gpg key of dokcer rep
+  become: true
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add docker rep to apt
+  become: true
+  vars:
+    dist: "{{ ansible_facts.distribution_release }}"
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ dist }} stable
+    state: present
+
+- name: Install Docker
+  become: true
+  ansible.builtin.apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    update_cache: true
+
+- name: Start Docker
+  become: true
+  ansible.builtin.service:
+    name: docker
+    state: started

@@ -1,0 +1,31 @@
+- name: Add apt key for k8s
+  become: true
+  ansible.builtin.apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Add apt rep for k8s
+  become: true
+  ansible.builtin.apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+    filename: kubernetes.list
+
+- name: Install k8s packages
+  become: true
+  ansible.builtin.apt: 
+    pkg:
+      - kubelet 
+      - kubeadm 
+      - kubectl
+    update_cache: true
+
+- name: Hold packages
+  become: true
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - kubelet 
+    - kubeadm 
+    - kubectl

@@ -1,0 +1,21 @@
+- name: Disable swap
+  ansible.builtin.import_tasks: 
+    file: disable_swap.yml
+
+- name: Install k8s
+  ansible.builtin.import_tasks: 
+    file: install_kubeadm.yml
+
+- name: Configure k8s
+  ansible.builtin.import_tasks: 
+    file: setting_common.yml
+
+- name: Setup Master
+  ansible.builtin.import_tasks: 
+    file: setting_master.yml
+  when: host == "master"
+
+- name: Setup Worker
+  ansible.builtin.import_tasks: 
+    file: setting_worker.yml
+  when: host == "worker"
