@@ -1,0 +1,16 @@
+- hosts: master
+  vars:
+    host: master
+  roles:
+    - apt
+    - containerd
+    - k8s
+    - cni/flannel
+
+- hosts: worker
+  vars:
+    host: worker
+  roles:
+    - apt
+    - containerd
+    - k8s

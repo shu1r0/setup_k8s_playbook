@@ -115,7 +115,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master.vm.network "private_network",virtualbox__intnet: "inet0", ip: "192.168.100.11", netmask:"255.255.255.0"
 
     master.vm.provision "shell", path: "scripts/setup_master.sh"
-    master.vm.provision 'shell', inline: "cd /home/vagrant/share; ansible-playbook -i vagrant-hosts.yml playbooks/setup_k8s.yml"
+    master.vm.provision 'shell', inline: "cd /home/vagrant/share; ansible-playbook -i vagrant-hosts.yml setup_k8s.yml"
 
     master.vm.provider "virtualbox" do |vb|
       vb.name = master_name
