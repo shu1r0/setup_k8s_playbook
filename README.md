@@ -14,3 +14,6 @@ ansible-playbook -i vagrant-hosts.yml playbooks/setup_k8s.yml
 ```
 vagrant up
 ```
+
+## References
+- [Kubernetes Setup Using Ansible and Vagrant | kubernetes](https://kubernetes.io/blog/2019/03/15/kubernetes-setup-using-ansible-and-vagrant/)
