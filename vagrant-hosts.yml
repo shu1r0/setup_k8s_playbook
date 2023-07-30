@@ -3,14 +3,19 @@ all:
     master:
       hosts:
         master0:
-          ansible_host: worker1.local
+          ansible_host: master.local
           ansible_user: vagrant
           ansible_ssh_private_key_file: /home/vagrant/.ssh/id_ed25519
           node_ip: "192.168.100.12"
     worker:
       hosts:
         worker0:
-          ansible_host: worker2.local
+          ansible_host: worker0.local
           ansible_user: vagrant
           ansible_ssh_private_key_file: /home/vagrant/.ssh/id_ed25519
           node_ip: "192.168.100.13"
+        worker1:
+          ansible_host: worker1.local
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: /home/vagrant/.ssh/id_ed25519
+          node_ip: "192.168.100.14"
